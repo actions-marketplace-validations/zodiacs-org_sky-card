@@ -1,0 +1,30 @@
+name: Check
+
+# Runs this action against the live zodiacs.org/mcp, writing into the example
+# README without committing.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  card:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          sign: scorpio
+          timezone: Asia/Bangkok
+          readme: example/README.md
+          commit: "false"
+      - name: Check the card was written
+        run: |
+          cat example/README.md
+          grep -q "Today's sky" example/README.md
+          grep -q "Reading confidence" example/README.md
+          grep -q "utm_source=github-sky-card" example/README.md
